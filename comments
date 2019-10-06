@@ -1,0 +1,174 @@
+For Processing the data:
+    Tracking, conversion and timingDAQ should be three separate processes running on different cores
+    Within each process (of the three) there could be pool processing runnign the same functions for different runs out of the list
+
+
+
+
+
+
+
+
+
+
+
+if tracking failed: retry tracking 
+
+
+
+Making defaults for version in the processing script, to change it through table: change this field and do redo
+Redo assumes that the tracking, converion and timing are already complete 
+
+
+verification: timingdaq with tracks
+	      check if the file is there
+	      check the entries
+	      check the size
+
+verification: timingdaq without tracks
+	      check if the file is there
+	      check the entries
+	      check the size
+
+
+if conversion failed: retry conversion 
+if t and c  both failed: retry everything
+
+if only timingdaq fails try that.
+
+                                                                                                                                                                                                                                                                                          
+        #Conversion will send complete once its done: pf.UpdateAttributeStatus(FieldID[RunList.index(run)], 'Conversion', 'Complete')                                                                                                                                                     
+                                                                                        
+
+Make a program which calls timingdaqcmds and calls the scripts and it verifies the field                                                                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+#Check the runs with complete and verify the root file to put verified/ Failed (put error code) in the field, and put the number of events in the field.                                                                                                                                  
+                 
+
+    #Run two of these functions in a different place one with track and one without storing root file in a diffferent locations. Runa function to check if the with track file exists if it does delete the no track one.                                                                 
+    #Also can run this thing with different version at the same time, root directory would be different.                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                          
+#Check all the run numbers with failed tracking, make a gui and update it                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                          
+    #Pass this run list and the field ID list in the conversion                                                                                                                                                                                                                           
+    for run in RunList:                                                                                                                                                                                                                                                                   
+        pf.UpdateAttributeStatus(FieldID[RunList.index(run)], 'Conversion', 'Processing')                                                                                                                                                                                                 
+    #Conversion will send complete once its done: pf.UpdateAttributeStatus(FieldID[RunList.index(run)], 'Conversion', 'Complete')                                                                                                                                                         
+        
+
+    #Pass this run list and the field ID list in the conversion                                                                                                                                                                                                                           
+    for run in RunList:                                                                                                                                                                                                                                                                   
+        pf.UpdateAttributeStatus(FieldID[RunList.index(run)], 'Conversion', 'Processing')                                                                                                                                                                                                 
+    #Conversion will send complete once its done: pf.UpdateAttributeStatus(FieldID[RunList.index(run)], 'Conversion', 'Complete')                                                                                                                                                         
+        
+
+
+ put all the error outputs in error file
+
+ Make a final wrapper script which take all the commands make a shell script for each command which run them, do short verification and update the run table at the end
+
+
+
+
+
+ Comments March 12:
+ Remove TimingDAQ Without Tracks 
+ Have one field for digitizer with three options
+
+
+
+import ParseFunctions as pf
+Sensor = 1
+Configuration = 1
+SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor))
+ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration))
+output = pf.NewRunRecord(10, "2019-03-13 10:07:32.922261", "0:00:27.327424", 'VME', 'N/A', 'N/A', 'Not started', SensorID[0], ConfigID[0])
+
+
+
+
+
+
+import ParseFunctions as pf
+Sensor = 1
+Configuration = 1
+SensorID = pf.GetFieldIDOtherTable('Sensor', 'Configuration number', str(Sensor))
+ConfigID = pf.GetFieldIDOtherTable('Config', 'Configuration number', str(Configuration))
+output = pf.NewRunRecord(10, "2019-03-13 10:07:32.922261", "0:00:27.327424", 'VME', 'N/A', 'N/A', 'Not started', SensorID[0], ConfigID[0])
+MyKey = 'keyfsS7rNSv9sNG6I'                                                                                                                                                                                                                            
+RunTableName = 'tblC4GsJFKjvXgG4e'                                                                                                                                                                                                                                                        
+SensorTableName = 'tblAUIj7OVFteuAEL'                                                                                                                                                                                                                                                     
+ConfigTableName = 'tblPKdZ7mOWfPr3K0'                                                                                                                                                                                BaseID = 'appd8tCrKgKiaAfre'                                                                                                                                                                                                                                                              
+CurlBaseCommand = 'https://api.airtable.com/v0/%s/%s' % (BaseID, RunTableName)                                                                                                                                                                                                            
+CurlBaseCommandSensor = 'https://api.airtable.com/v0/%s/%s' % (BaseID, SensorTableName)                                                                                                                                                                                                   
+CurlBaseCommandConfig = 'https://api.airtable.com/v0/%s/%s' % (BaseID, ConfigTableName)                                                                                                                                                                                                   
+headers = {'Authorization': 'Bearer %s' % MyKey, }
+FilterByFormula = pf.EqualToFunc(pf.Curly("Run number"), pf.DoubleQuotes("4"))
+import requests
+import ast
+response = requests.get(CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)                                                                                                                                                                                    
+ResponseDict = ast.literal_eval(response.text)
+
+
+
+
+import ProcessCMDs as pc
+import ProcessRuns as pr
+import ProcessExec as pe
+import AllModules as am
+import ParseFunctions as pf
+
+
+
+if TableName == 'Sensor' :
+CurlBaseCommand = am.CurlBaseCommandSensor
+elif TableName == 'Config':
+        CurlBaseCommand = am.CurlBaseCommandConfig
+    Output = [] 
+    FilterByFormula = EqualToFunc(Curly(ConditionAttributeName), DoubleQuotes(ConditionAttributeStatus))
+    headers = {'Authorization': 'Bearer %s' % am.MyKey, }
+    response = am.requests.get(am.CurlBaseCommand  + '?filterByFormula=' + FilterByFormula, headers=headers)
+    ResponseDict = am.ast.literal_eval(response.text)
+
+
+
+
+
+
+
+
+if pf.QueryGreenSignal(True): pf.NewRunRecord(5234, str(am.datetime.now()), '0.001', 'TekScope', 'Not started', 'Not started', 'Not started', SensorID, ConfigID)
+
+
+
+
+
+
+
+runs are processing and kill the shell script: then how to handle that
+what if the tracks are already there remotely, what if present at both places
+
+
+
+
+Each field you're querying should have entries for all the records
+Don't give options in version
+
+
+Jarvis works for tekscope perfectly
+
+
+
+
+    

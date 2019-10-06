@@ -35,7 +35,7 @@ def copynew(source,destination):
 """#################SEARCH/CONNECT#################"""
 # establish communication with dpo
 rm = visa.ResourceManager('@py')
-dpo = rm.open_resource('TCPIP::192.168.155.159::INSTR')
+dpo = rm.open_resource('TCPIP::192.168.0.136::INSTR')
 dpo.timeout = 3000000
 dpo.encoding = 'latin_1'
 print(dpo.query('*idn?'))
@@ -71,9 +71,9 @@ print "timeoffset is ",timeoffset
 date = datetime.datetime.now()
 
 RunNumberFile = '/home/daq/JARVIS/AutoPilot/otsdaq_runNumber.txt'
-log_path = "/home/sxie/ETL_Agilent_MSO-X-92004A/Acquisition/Logbook.txt"
-run_log_path = "/home/sxie/ETL_Agilent_MSO-X-92004A/Acquisition/RunLog.txt"
-TimestampFilePath = "/home/sxie/ETL_Agilent_MSO-X-92004A/Acquisition/TimestampFile.txt"
+log_path = "/Users/cmelkor/Desktop/FQNET-Agilent-Scope/Logbook.txt"
+run_log_path = "/Users/cmelkor/Desktop/FQNET-Agilent-Scope/Acquisition/RunLog.txt"
+TimestampFilePath = "/Users/cmelkor/Desktop/FQNET-Agilent-Scope/Acquisition/TimestampFile.txt"
 
 """#################CONFIGURE INSTRUMENT#################"""
 # variables for individual settings
@@ -175,11 +175,28 @@ dpo.write('CHANnel2:SCALe {}'.format(vScale_ch2))
 dpo.write('CHANnel3:SCALe {}'.format(vScale_ch3))
 dpo.write('CHANnel4:SCALe {}'.format(vScale_ch4))
 
-dpo.write('CHANnel1:OFFSet {}'.format(-vScale_ch1 * vPos_ch1))
-dpo.write('CHANnel2:OFFSet {}'.format(-vScale_ch2 * vPos_ch2))
-dpo.write('CHANnel3:OFFSet {}'.format(-vScale_ch3 * vPos_ch3))
-dpo.write('CHANnel4:OFFSet {}'.format(-vScale_ch4 * vPos_ch4))
+#dpo.write('CHANnel1:OFFSet {}'.format(-vScale_ch1 * vPos_ch1))
+#dpo.write('CHANnel2:OFFSet {}'.format(-vScale_ch2 * vPos_ch2))
+#dpo.write('CHANnel3:OFFSet {}'.format(-vScale_ch3 * vPos_ch3))
+#dpo.write('CHANnel4:OFFSet {}'.format(-vScale_ch4 * vPos_ch4))
 
+vOff_ch1 = 0.151
+vOff_ch2 = 1.5
+vOff_ch3 = 1.5
+vOff_ch4 = 0.02
+dpo.write('CHANnel1:OFFSet {}'.format(vOff_ch1))
+dpo.write('CHANnel2:OFFSet {}'.format(vOff_ch2))
+dpo.write('CHANnel3:OFFSet {}'.format(vOff_ch3))
+dpo.write('CHANnel4:OFFSet {}'.format(vOff_ch4))
+
+dpo.write('CHANnel1:INPut DC50')
+dpo.write('CHANnel2:INPut DC50')
+dpo.write('CHANnel3:INPut DC50')
+dpo.write('CHANnel4:INPut DC50')
+
+dpo.write('CHANnel1:INVert 1')
+dpo.write('CHANnel2:INVert 1')
+dpo.write('CHANnel3:INVert 1')
 
 logf.write("VERTICAL SETUP\n")
 logf.write('- CH1: vertical scale set to {} V for division\n'.format(vScale_ch1))
@@ -252,27 +269,36 @@ dpo.write(':DISK:SEGMented ALL') ##save all segments (as opposed to just the cur
 print(dpo.query('*OPC?'))
 print("Ready to save all segments")
 time.sleep(0.5)
-dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH1_%s",BIN,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH1_%s",CSV,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH1_%s",BIN,ON'%(runNumber))
+#dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\cmelkor\\Desktop\\FQNET-Agilent-Scope\\outputWaveform\\Wavenewscope_CH1_%s",BIN,ON'%(runNumber))
+#dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH1_%s",BIN,ON'%(runNumber))
 #dpo.write(':DISK:SAVE:WAVeform CHANnel1 ,"C:\\Users\\Public\\Documents\\AgilentWaveform\\Wavenewscope_CH1_test_4000events",BIN,ON')
 
 print(dpo.query('*OPC?'))
 print("Saved Channel 1 waveform")
 time.sleep(1)
-dpo.write(':DISK:SAVE:WAVeform CHANnel2 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH2_%s",BIN,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel2 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH2_%s",CSV,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel2 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH2_%s",BIN,ON'%(runNumber))
+#dpo.write(':DISK:SAVE:WAVeform CHANnel2 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH2_%s",BIN,ON'%(runNumber))
 #dpo.write(':DISK:SAVE:WAVeform CHANnel2 ,"C:\\Users\\Public\\Documents\\AgilentWaveform\\Wavenewscope_CH2_test_4000events",BIN,ON')
 
 print(dpo.query('*OPC?'))
 print("Saved Channel 2 waveform")
 time.sleep(1)
 
-dpo.write(':DISK:SAVE:WAVeform CHANnel3 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH3_%s",BIN,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel3 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH3_%s",CSV,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel3 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH3_%s",BIN,ON'%(runNumber))
+#dpo.write(':DISK:SAVE:WAVeform CHANnel3 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH3_%s",BIN,ON'%(runNumber))
 #dpo.write(':DISK:SAVE:WAVeform CHANnel3 ,"C:\\Users\\Public\\Documents\\AgilentWaveform\\Wavenewscope_CH3_test_4000events",BIN,ON')
 
 print(dpo.query('*OPC?'))
 print("Saved Channel 3 waveform")
 time.sleep(1)
 
-dpo.write(':DISK:SAVE:WAVeform CHANnel4 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH4_%s",BIN,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel4 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH4_%s",CSV,ON'%(runNumber))
+dpo.write(':DISK:SAVE:WAVeform CHANnel4 ,"C:\\Users\\Administrator\\Desktop\\data\\CMSTiming\\WaveformsFromDAQ\\Wavenewscope_CH4_%s",BIN,ON'%(runNumber))
+#dpo.write(':DISK:SAVE:WAVeform CHANnel4 ,"C:\\Users\\daq\\Documents\\AgilentWaveform\\Wavenewscope_CH4_%s",BIN,ON'%(runNumber))
 #dpo.write(':DISK:SAVE:WAVeform CHANnel4 ,"C:\\Users\\Public\\Documents\\AgilentWaveform\\Wavenewscope_CH4_test_4000events",BIN,ON')
 
 print(dpo.query('*OPC?'))

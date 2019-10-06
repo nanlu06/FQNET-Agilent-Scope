@@ -1,0 +1,2 @@
+keyfsS7rNSv9sNG6I
+curl https://api.airtable.com/v0/appd8tCrKgKiaAfre/Run%20Table?fields%5B%5D=Run+Number\\&filterByFormula=%7BTracking%7D+%3D+%22Complete%22 -H "Authorization: Bearer keyfsS7rNSv9sNG6I"
